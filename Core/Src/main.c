@@ -35,6 +35,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define TEMP_OFFSET +1
+#define HUM_OFFSET -5
 
 /* USER CODE END PD */
 
@@ -304,6 +306,12 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
 
   set_rgb_pwm(0, 0, 0);
+
+  display_mode = 0;
+  button_pressed = 0;
+  char mode_msg[50];
+  sprintf(mode_msg, "Mode: TEMPERATURE\r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t*)mode_msg, strlen(mode_msg), HAL_MAX_DELAY);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -320,7 +328,6 @@ int main(void)
           display_mode = (display_mode + 1) % 3;
           HAL_Delay(200);
 
-          char mode_msg[50];
           if (display_mode == 0) sprintf(mode_msg, "Mode: TEMPERATURE\r\n");
           else if (display_mode == 1) sprintf(mode_msg, "Mode: HUMIDITY\r\n");
           else sprintf(mode_msg, "Mode: LIGHT\r\n");
@@ -347,6 +354,12 @@ int main(void)
       if(sum == checksum) {
         temperature = T_byte1;
         humidity = RH_byte1;
+
+        temperature += TEMP_OFFSET;
+        humidity += HUM_OFFSET;
+
+        if (humidity < 0) humidity = 0;
+        if (humidity > 100) humidity = 100;
       }
     }
 
