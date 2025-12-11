@@ -35,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEMP_OFFSET +1
+#define TEMP_OFFSET +2
 #define HUM_OFFSET -5
 
 /* USER CODE END PD */
